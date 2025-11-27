@@ -1,0 +1,24 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom CSS variables based on design */
+:root {
+  --color-background: #F8FAFC;
+  --color-yellow-light: #F5D565;
+  --color-yellow-bg: #F5E8D5;
+  --color-yellow: #E9A23B;
+  --color-green-light: #A0ECB1;
+  --color-green: #32D657;
+  --color-red-light: #F7D4D3;
+  --color-red: #DD524C;
+  --color-gray-light: #E3E8EF;
+  --color-gray: #97A3B6;
+  --color-blue: #3662E3;
+  --color-shadow: #00000033;
+}
+
+body {
+  font-family: 'Outfit', sans-serif;
+  background-color: var(--color-background);
+}
