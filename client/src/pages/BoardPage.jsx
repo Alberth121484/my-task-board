@@ -6,6 +6,7 @@ import {
   TaskCard,
   AddTaskButton,
   TaskEditModal,
+  LoadingSpinner,
 } from '../components';
 import { useBoardStore } from '../store';
 
@@ -97,7 +98,7 @@ export default function BoardPage() {
     return (
       <Layout>
         <div className="flex items-center justify-center h-64">
-          <div className="text-task-gray text-lg">Loading board...</div>
+          <LoadingSpinner size="lg" text="Loading board..." />
         </div>
       </Layout>
     );
@@ -171,7 +172,7 @@ export default function BoardPage() {
       />
 
       {/* Task Cards */}
-      <div className="space-y-4">
+      <div className="space-y-3 sm:space-y-4 animate-stagger">
         {tasks.map((task) => (
           <TaskCard
             key={task.id}

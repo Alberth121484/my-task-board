@@ -36,7 +36,7 @@ export default function Modal({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center">
+    <div className="fixed inset-0 z-50 flex items-center justify-center animate-fade-in">
       {/* Backdrop */}
       <div 
         className="absolute inset-0 bg-black/50 backdrop-blur-sm"
@@ -44,13 +44,14 @@ export default function Modal({
       />
       
       {/* Modal Content */}
-      <div className="relative bg-white rounded-xl shadow-modal w-full max-w-lg mx-3 sm:mx-4 max-h-[90vh] overflow-y-auto">
+      <div className="relative bg-white rounded-xl shadow-modal w-full max-w-lg mx-3 sm:mx-4 max-h-[90vh] overflow-y-auto animate-scale-in">
         {/* Header */}
         <div className="flex items-center justify-between p-4 sm:p-6 pb-0">
           <h2 className="text-lg sm:text-xl font-semibold text-gray-800">{title}</h2>
           <button
             onClick={onClose}
-            className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-task-gray-light transition-colors"
+            className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-task-gray-light 
+                       transition-all duration-200 hover:rotate-90"
           >
             <img 
               src="/icons/close_ring_duotone_orange.svg" 

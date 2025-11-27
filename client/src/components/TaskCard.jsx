@@ -49,7 +49,8 @@ export default function TaskCard({
       className={`
         ${config.cardBg} 
         p-3 sm:p-4 rounded-task flex items-center gap-3 sm:gap-4 
-        cursor-pointer hover:opacity-90 transition-all duration-200
+        cursor-pointer transition-all duration-200
+        hover:scale-[1.02] hover:shadow-md active:scale-[0.98]
         ${isSelected ? 'ring-2 ring-task-blue ring-offset-2' : ''}
       `}
     >

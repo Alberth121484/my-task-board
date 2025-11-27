@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Layout } from '../components';
+import { Layout, LoadingSpinner } from '../components';
 import { useBoardStore } from '../store';
 
 /**
@@ -87,17 +87,19 @@ export default function HomePage() {
 
   return (
     <Layout>
-      <div className="flex flex-col items-center justify-center h-64 gap-4">
+      <div className="flex flex-col items-center justify-center h-64 gap-6 animate-fade-in-up">
         <div className="flex items-center gap-3">
           <img src="/icons/Logo.svg" alt="Logo" className="w-12 h-12" />
           <h1 className="text-2xl font-semibold">My Task Board</h1>
         </div>
         {isCreating ? (
-          <p className="text-task-gray">Creating your board...</p>
+          <LoadingSpinner size="md" text="Creating your board..." />
         ) : (
           <button
             onClick={handleCreateNew}
-            className="px-6 py-2 bg-task-blue text-white rounded-button hover:bg-blue-600 transition-colors"
+            className="px-6 py-2 bg-task-blue text-white rounded-button 
+                       hover:bg-blue-600 hover:scale-105 active:scale-95
+                       transition-all duration-200"
           >
             Create New Board
           </button>
