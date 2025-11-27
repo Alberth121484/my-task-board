@@ -2,23 +2,115 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Custom CSS variables based on design */
-:root {
-  --color-background: #F8FAFC;
-  --color-yellow-light: #F5D565;
-  --color-yellow-bg: #F5E8D5;
-  --color-yellow: #E9A23B;
-  --color-green-light: #A0ECB1;
-  --color-green: #32D657;
-  --color-red-light: #F7D4D3;
-  --color-red: #DD524C;
-  --color-gray-light: #E3E8EF;
-  --color-gray: #97A3B6;
-  --color-blue: #3662E3;
-  --color-shadow: #00000033;
+/* Base layer customizations */
+@layer base {
+  :root {
+    --color-background: #F8FAFC;
+    --color-yellow-light: #F5D565;
+    --color-yellow-bg: #F5E8D5;
+    --color-yellow: #E9A23B;
+    --color-green-light: #A0ECB1;
+    --color-green: #32D657;
+    --color-red-light: #F7D4D3;
+    --color-red: #DD524C;
+    --color-gray-light: #E3E8EF;
+    --color-gray: #97A3B6;
+    --color-blue: #3662E3;
+    --color-shadow: rgba(0, 0, 0, 0.2);
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  body {
+    font-family: 'Outfit', sans-serif;
+    background-color: var(--color-background);
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+  }
+
+  /* Remove default input styles */
+  input, textarea {
+    font-family: inherit;
+  }
+
+  input:focus, textarea:focus {
+    outline: none;
+  }
 }
 
-body {
-  font-family: 'Outfit', sans-serif;
-  background-color: var(--color-background);
+/* Component layer for reusable styles */
+@layer components {
+  /* Task card status backgrounds */
+  .task-status-in_progress {
+    @apply bg-task-yellow;
+  }
+
+  .task-status-completed {
+    @apply bg-task-green-light;
+  }
+
+  .task-status-wont_do {
+    @apply bg-task-red-light;
+  }
+
+  .task-status-todo {
+    @apply bg-task-gray-light;
+  }
+
+  /* Status indicator badges */
+  .status-badge-in_progress {
+    @apply bg-task-yellow-dark;
+  }
+
+  .status-badge-completed {
+    @apply bg-task-green;
+  }
+
+  .status-badge-wont_do {
+    @apply bg-task-red;
+  }
+
+  /* Icon container styles */
+  .icon-container {
+    @apply w-12 h-12 rounded-icon flex items-center justify-center bg-white;
+  }
+
+  /* Button base styles */
+  .btn {
+    @apply px-4 py-2 rounded-button font-medium text-button transition-all duration-200;
+  }
+
+  .btn-primary {
+    @apply btn bg-task-blue text-white hover:opacity-90;
+  }
+
+  .btn-danger {
+    @apply btn bg-task-gray text-white hover:bg-task-red;
+  }
+
+  /* Input styles */
+  .input-field {
+    @apply w-full px-4 py-3 border-2 border-task-gray-light rounded-task 
+           focus:border-task-blue transition-colors duration-200;
+  }
+
+  .input-label {
+    @apply text-label text-task-gray mb-1 block;
+  }
+}
+
+/* Utility layer for custom utilities */
+@layer utilities {
+  /* Smooth transitions */
+  .transition-base {
+    @apply transition-all duration-200 ease-in-out;
+  }
+
+  /* Center container */
+  .center-container {
+    @apply max-w-board mx-auto px-4;
+  }
 }
