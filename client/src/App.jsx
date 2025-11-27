@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { 
   Layout, 
   BoardHeader,
@@ -11,121 +11,153 @@ import {
   IconSelector, 
   StatusSelector 
 } from './components';
+import { useBoardStore } from './store';
 
-// Sample tasks data
-const SAMPLE_TASKS = [
-  {
-    id: '1',
-    name: 'Task in Progress',
-    description: '',
-    icon: '⏰',
-    status: 'in_progress',
-  },
-  {
-    id: '2',
-    name: 'Task Completed',
-    description: '',
-    icon: '🏆',
-    status: 'completed',
-  },
-  {
-    id: '3',
-    name: "Task Won't Do",
-    description: '',
-    icon: '☕',
-    status: 'wont_do',
-  },
-  {
-    id: '4',
-    name: 'Task To Do',
-    description: 'Work on a Challenge on devChallenges.io, learn TypeScript.',
-    icon: '📚',
-    status: 'todo',
-  },
-];
+// Default editing task state
+const DEFAULT_TASK = {
+  name: 'New Task',
+  description: '',
+  icon: '📝',
+  status: 'todo',
+};
 
 function App() {
-  // Board state
-  const [boardName, setBoardName] = useState('My Task Board');
-  const [boardDescription, setBoardDescription] = useState('Tasks to keep organised');
-  const [tasks, setTasks] = useState(SAMPLE_TASKS);
-  
-  // Modal state
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedTask, setSelectedTask] = useState(null);
-  const [editingTask, setEditingTask] = useState({
-    name: '',
-    description: '',
-    icon: '📝',
-    status: 'todo',
-  });
+  // Zustand store
+  const {
+    board,
+    tasks,
+    isLoading,
+    error,
+    selectedTask,
+    isModalOpen,
+    updateBoardName,
+    updateBoardDescription,
+    addTask,
+    updateTask,
+    deleteTask,
+    openEditModal,
+    openAddModal,
+    closeModal,
+    createBoard,
+    fetchBoard,
+  } = useBoardStore();
 
-  const handleBoardNameChange = (newName) => {
-    setBoardName(newName);
-    console.log('Board name changed to:', newName);
-    // TODO: API call to update board
+  // Local state for form editing
+  const [editingTask, setEditingTask] = useState(DEFAULT_TASK);
+
+  // Initialize board on mount (for demo, create a new board if none exists)
+  useEffect(() => {
+    const initBoard = async () => {
+      // Check if there's a board ID in localStorage
+      const savedBoardId = localStorage.getItem('boardId');
+      
+      if (savedBoardId) {
+        try {
+          await fetchBoard(savedBoardId);
+        } catch (err) {
+          // If board not found, create a new one
+          console.log('Board not found, creating new one...');
+          const newBoard = await createBoard();
+          localStorage.setItem('boardId', newBoard.id);
+        }
+      } else {
+        // Create a new board
+        const newBoard = await createBoard();
+        localStorage.setItem('boardId', newBoard.id);
+      }
+    };
+
+    initBoard();
+  }, [fetchBoard, createBoard]);
+
+  // Update editing task when selectedTask changes
+  useEffect(() => {
+    if (selectedTask) {
+      setEditingTask({
+        name: selectedTask.name,
+        description: selectedTask.description || '',
+        icon: selectedTask.icon,
+        status: selectedTask.status,
+      });
+    } else {
+      setEditingTask(DEFAULT_TASK);
+    }
+  }, [selectedTask]);
+
+  const handleBoardNameChange = async (newName) => {
+    try {
+      await updateBoardName(newName);
+    } catch (err) {
+      console.error('Failed to update board name:', err);
+    }
   };
 
-  const handleBoardDescriptionChange = (newDescription) => {
-    setBoardDescription(newDescription);
-    console.log('Board description changed to:', newDescription);
-    // TODO: API call to update board
+  const handleBoardDescriptionChange = async (newDescription) => {
+    try {
+      await updateBoardDescription(newDescription);
+    } catch (err) {
+      console.error('Failed to update board description:', err);
+    }
   };
 
   const handleTaskClick = (task) => {
-    setSelectedTask(task);
-    setEditingTask({
-      name: task.name,
-      description: task.description,
-      icon: task.icon,
-      status: task.status,
-    });
-    setIsModalOpen(true);
+    openEditModal(task);
   };
 
   const handleAddTask = () => {
-    setSelectedTask(null);
-    setEditingTask({
-      name: 'New Task',
-      description: '',
-      icon: '📝',
-      status: 'todo',
-    });
-    setIsModalOpen(true);
+    openAddModal();
   };
 
-  const handleSaveTask = () => {
-    if (selectedTask) {
-      // Update existing task
-      setTasks(tasks.map(t => 
-        t.id === selectedTask.id 
-          ? { ...t, ...editingTask }
-          : t
-      ));
-    } else {
-      // Add new task
-      const newTask = {
-        id: String(Date.now()),
-        ...editingTask,
-      };
-      setTasks([...tasks, newTask]);
+  const handleSaveTask = async () => {
+    try {
+      if (selectedTask) {
+        await updateTask(selectedTask.id, editingTask);
+      } else {
+        await addTask(editingTask);
+      }
+    } catch (err) {
+      console.error('Failed to save task:', err);
     }
-    setIsModalOpen(false);
   };
 
-  const handleDeleteTask = () => {
+  const handleDeleteTask = async () => {
     if (selectedTask) {
-      setTasks(tasks.filter(t => t.id !== selectedTask.id));
-      setIsModalOpen(false);
+      try {
+        await deleteTask(selectedTask.id);
+      } catch (err) {
+        console.error('Failed to delete task:', err);
+      }
     }
   };
+
+  // Loading state
+  if (isLoading && !board) {
+    return (
+      <Layout>
+        <div className="flex items-center justify-center h-64">
+          <div className="text-task-gray">Loading...</div>
+        </div>
+      </Layout>
+    );
+  }
+
+  // Error state
+  if (error && !board) {
+    return (
+      <Layout>
+        <div className="flex items-center justify-center h-64">
+          <div className="text-task-red">Error: {error}</div>
+        </div>
+      </Layout>
+    );
+  }
 
   return (
     <Layout>
       {/* Board Header */}
       <BoardHeader
-        name={boardName}
-        description={boardDescription}
+        name={board?.name || 'My Task Board'}
+        description={board?.description || 'Tasks to keep organised'}
         onNameChange={handleBoardNameChange}
         onDescriptionChange={handleBoardDescriptionChange}
       />
@@ -148,7 +180,7 @@ function App() {
       {/* Task Edit Modal */}
       <Modal 
         isOpen={isModalOpen} 
-        onClose={() => setIsModalOpen(false)}
+        onClose={closeModal}
         title="Task details"
       >
         <div className="space-y-5">
