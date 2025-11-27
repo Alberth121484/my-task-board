@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { 
   Layout, 
@@ -16,6 +16,7 @@ import { useBoardStore } from '../store';
 export default function BoardPage() {
   const { boardId } = useParams();
   const navigate = useNavigate();
+  const [showCopied, setShowCopied] = useState(false);
 
   const {
     board,
@@ -29,15 +30,21 @@ export default function BoardPage() {
     openEditModal,
     openAddModal,
     fetchBoard,
+    createBoard,
     reset,
   } = useBoardStore();
 
   // Fetch board when boardId changes
   useEffect(() => {
     if (boardId) {
-      fetchBoard(boardId).catch((err) => {
-        console.error('Failed to fetch board:', err);
-      });
+      fetchBoard(boardId)
+        .then(() => {
+          // Save to localStorage when board is successfully loaded
+          localStorage.setItem('boardId', boardId);
+        })
+        .catch((err) => {
+          console.error('Failed to fetch board:', err);
+        });
     }
 
     // Reset store when leaving the page
@@ -45,6 +52,29 @@ export default function BoardPage() {
       reset();
     };
   }, [boardId, fetchBoard, reset]);
+
+  // Copy board URL to clipboard
+  const handleCopyUrl = async () => {
+    const url = window.location.href;
+    try {
+      await navigator.clipboard.writeText(url);
+      setShowCopied(true);
+      setTimeout(() => setShowCopied(false), 2000);
+    } catch (err) {
+      console.error('Failed to copy URL:', err);
+    }
+  };
+
+  // Create a new board
+  const handleNewBoard = async () => {
+    try {
+      const newBoard = await createBoard();
+      localStorage.setItem('boardId', newBoard.id);
+      navigate(`/board/${newBoard.id}`);
+    } catch (err) {
+      console.error('Failed to create board:', err);
+    }
+  };
 
   const handleBoardNameChange = async (newName) => {
     try {
@@ -93,6 +123,43 @@ export default function BoardPage() {
 
   return (
     <Layout>
+      {/* Action Bar */}
+      <div className="flex justify-end gap-2 mb-4">
+        <button
+          onClick={handleCopyUrl}
+          className="px-3 py-1.5 text-sm bg-task-gray-light text-gray-700 rounded-button 
+                     hover:bg-gray-300 transition-colors flex items-center gap-1.5"
+          title="Copy board URL"
+        >
+          {showCopied ? (
+            <>
+              <svg className="w-4 h-4 text-task-green" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+              </svg>
+              Copied!
+            </>
+          ) : (
+            <>
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+              </svg>
+              Share
+            </>
+          )}
+        </button>
+        <button
+          onClick={handleNewBoard}
+          className="px-3 py-1.5 text-sm bg-task-blue text-white rounded-button 
+                     hover:bg-blue-600 transition-colors flex items-center gap-1.5"
+          title="Create new board"
+        >
+          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+          </svg>
+          New Board
+        </button>
+      </div>
+
       {/* Board Header */}
       <BoardHeader
         name={board?.name || 'My Task Board'}
