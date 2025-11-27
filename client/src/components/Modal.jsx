@@ -44,10 +44,10 @@ export default function Modal({
       />
       
       {/* Modal Content */}
-      <div className="relative bg-white rounded-xl shadow-modal w-full max-w-lg mx-4 max-h-[90vh] overflow-y-auto">
+      <div className="relative bg-white rounded-xl shadow-modal w-full max-w-lg mx-3 sm:mx-4 max-h-[90vh] overflow-y-auto">
         {/* Header */}
-        <div className="flex items-center justify-between p-6 pb-0">
-          <h2 className="text-xl font-semibold text-gray-800">{title}</h2>
+        <div className="flex items-center justify-between p-4 sm:p-6 pb-0">
+          <h2 className="text-lg sm:text-xl font-semibold text-gray-800">{title}</h2>
           <button
             onClick={onClose}
             className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-task-gray-light transition-colors"
@@ -61,7 +61,7 @@ export default function Modal({
         </div>
         
         {/* Body */}
-        <div className="p-6">
+        <div className="p-4 sm:p-6">
           {children}
         </div>
       </div>

@@ -81,13 +81,13 @@ export default function BoardHeader({
   };
 
   return (
-    <div className="mb-6">
+    <div className="mb-4 sm:mb-6">
       {/* Title Row */}
-      <div className="flex items-center gap-3 mb-2">
+      <div className="flex items-center gap-2 sm:gap-3 mb-2">
         <img 
           src="/icons/Logo.svg" 
           alt="Task Board Logo" 
-          className="w-10 h-10 flex-shrink-0" 
+          className="w-8 h-8 sm:w-10 sm:h-10 flex-shrink-0" 
         />
         
         {isEditingName ? (
@@ -98,13 +98,13 @@ export default function BoardHeader({
             onChange={(e) => setLocalName(e.target.value)}
             onBlur={handleNameSubmit}
             onKeyDown={handleNameKeyDown}
-            className="text-title font-outfit bg-transparent border-b-2 border-task-blue 
+            className="text-xl sm:text-2xl md:text-title font-outfit bg-transparent border-b-2 border-task-blue 
                        outline-none py-1 min-w-0 flex-1"
             placeholder="Board name"
           />
         ) : (
           <h1 
-            className="text-title font-outfit cursor-pointer hover:opacity-80 transition-opacity"
+            className="text-xl sm:text-2xl md:text-title font-outfit cursor-pointer hover:opacity-80 transition-opacity truncate"
             onClick={() => setIsEditingName(true)}
           >
             {localName}
@@ -119,7 +119,7 @@ export default function BoardHeader({
           <img 
             src="/icons/Edit_duotone.svg" 
             alt="Edit" 
-            className="w-6 h-6" 
+            className="w-5 h-5 sm:w-6 sm:h-6" 
           />
         </button>
       </div>
@@ -133,13 +133,13 @@ export default function BoardHeader({
           onChange={(e) => setLocalDescription(e.target.value)}
           onBlur={handleDescriptionSubmit}
           onKeyDown={handleDescriptionKeyDown}
-          className="text-description text-task-gray bg-transparent border-b-2 border-task-blue 
-                     outline-none py-1 w-full ml-[52px]"
+          className="text-sm sm:text-description text-task-gray bg-transparent border-b-2 border-task-blue 
+                     outline-none py-1 w-full ml-10 sm:ml-[52px]"
           placeholder="Add a description"
         />
       ) : (
         <p 
-          className="text-description text-task-gray ml-[52px] cursor-pointer hover:opacity-80 transition-opacity"
+          className="text-sm sm:text-description text-task-gray ml-10 sm:ml-[52px] cursor-pointer hover:opacity-80 transition-opacity"
           onClick={() => setIsEditingDescription(true)}
         >
           {localDescription || 'Click to add description'}

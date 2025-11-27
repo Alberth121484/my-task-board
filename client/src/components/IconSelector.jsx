@@ -27,14 +27,14 @@ export default function IconSelector({
           {label}
         </label>
       )}
-      <div className="flex gap-3 flex-wrap">
+      <div className="flex gap-2 sm:gap-3 flex-wrap">
         {ICONS.map(({ emoji, label: iconLabel }) => (
           <button
             key={emoji}
             type="button"
             onClick={() => onChange(emoji)}
             title={iconLabel}
-            className={`w-12 h-12 rounded-icon flex items-center justify-center text-xl
+            className={`w-10 h-10 sm:w-12 sm:h-12 rounded-icon flex items-center justify-center text-lg sm:text-xl
                        transition-all duration-200 border-2
                        ${value === emoji 
                          ? 'bg-task-yellow-light border-task-yellow-dark' 
