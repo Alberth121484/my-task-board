@@ -2,7 +2,9 @@
 
 A full-stack task management application built with React and Express.js.
 
-![Task Board Preview](./docs/preview.png)
+![Task Board Preview](https://github.com/user-attachments/assets/86d1ed0f-a273-4824-91f9-45d2136a7503)
+![Task Board Form Preview](https://github.com/user-attachments/assets/99ed36e8-d9ab-4874-a81a-4f029bf08fb5)
+
 
 ## Features
 
