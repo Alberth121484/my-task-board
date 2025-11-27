@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useBoardStore } from '../store';
+import { useBoardStore, useToastStore } from '../store';
 import Modal from './Modal';
 import Input from './Input';
 import TextArea from './TextArea';
@@ -31,6 +31,8 @@ export default function TaskEditModal() {
     deleteTask,
     closeModal,
   } = useBoardStore();
+  
+  const toast = useToastStore();
 
   // Local form state
   const [formData, setFormData] = useState(DEFAULT_TASK);
@@ -56,18 +58,21 @@ export default function TaskEditModal() {
 
   const handleSave = async () => {
     if (!formData.name.trim()) {
-      return; // Don't save empty task names
+      toast.error('Task name is required');
+      return;
     }
 
     setIsSaving(true);
     try {
       if (selectedTask) {
         await updateTask(selectedTask.id, formData);
+        toast.success('Task updated successfully');
       } else {
         await addTask(formData);
+        toast.success('Task created successfully');
       }
     } catch (error) {
-      console.error('Failed to save task:', error);
+      toast.error(error.message || 'Failed to save task');
     } finally {
       setIsSaving(false);
     }
@@ -79,8 +84,9 @@ export default function TaskEditModal() {
     setIsSaving(true);
     try {
       await deleteTask(selectedTask.id);
+      toast.success('Task deleted');
     } catch (error) {
-      console.error('Failed to delete task:', error);
+      toast.error(error.message || 'Failed to delete task');
     } finally {
       setIsSaving(false);
     }

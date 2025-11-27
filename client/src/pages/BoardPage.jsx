@@ -7,8 +7,9 @@ import {
   AddTaskButton,
   TaskEditModal,
   LoadingSpinner,
+  EmptyState,
 } from '../components';
-import { useBoardStore } from '../store';
+import { useBoardStore, useToastStore } from '../store';
 
 /**
  * BoardPage - Displays a board with its tasks
@@ -18,6 +19,7 @@ export default function BoardPage() {
   const { boardId } = useParams();
   const navigate = useNavigate();
   const [showCopied, setShowCopied] = useState(false);
+  const toast = useToastStore();
 
   const {
     board,
@@ -61,8 +63,9 @@ export default function BoardPage() {
       await navigator.clipboard.writeText(url);
       setShowCopied(true);
       setTimeout(() => setShowCopied(false), 2000);
+      toast.success('Board URL copied to clipboard');
     } catch (err) {
-      console.error('Failed to copy URL:', err);
+      toast.error('Failed to copy URL');
     }
   };
 
@@ -81,7 +84,7 @@ export default function BoardPage() {
     try {
       await updateBoardName(newName);
     } catch (err) {
-      console.error('Failed to update board name:', err);
+      toast.error('Failed to update board name');
     }
   };
 
@@ -89,7 +92,7 @@ export default function BoardPage() {
     try {
       await updateBoardDescription(newDescription);
     } catch (err) {
-      console.error('Failed to update board description:', err);
+      toast.error('Failed to update board description');
     }
   };
 
@@ -172,18 +175,39 @@ export default function BoardPage() {
       />
 
       {/* Task Cards */}
-      <div className="space-y-3 sm:space-y-4 animate-stagger">
-        {tasks.map((task) => (
-          <TaskCard
-            key={task.id}
-            task={task}
-            onClick={() => openEditModal(task)}
-            isSelected={selectedTask?.id === task.id && isModalOpen}
+      <div className="space-y-3 sm:space-y-4">
+        {tasks.length === 0 ? (
+          <EmptyState
+            icon="📋"
+            title="No tasks yet"
+            description="Get started by adding your first task to this board."
+            action={
+              <button
+                onClick={openAddModal}
+                className="px-4 py-2 bg-task-blue text-white rounded-button 
+                           hover:bg-blue-600 hover:scale-105 active:scale-95
+                           transition-all duration-200"
+              >
+                Add your first task
+              </button>
+            }
           />
-        ))}
+        ) : (
+          <div className="animate-stagger">
+            {tasks.map((task) => (
+              <div key={task.id} className="mb-3 sm:mb-4 last:mb-0">
+                <TaskCard
+                  task={task}
+                  onClick={() => openEditModal(task)}
+                  isSelected={selectedTask?.id === task.id && isModalOpen}
+                />
+              </div>
+            ))}
+          </div>
+        )}
 
-        {/* Add New Task Button */}
-        <AddTaskButton onClick={openAddModal} />
+        {/* Add New Task Button - only show if tasks exist */}
+        {tasks.length > 0 && <AddTaskButton onClick={openAddModal} />}
       </div>
 
       {/* Task Edit Modal */}
