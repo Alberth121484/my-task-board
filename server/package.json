@@ -4,9 +4,13 @@
   "description": "Express.js backend for My Task Board",
   "main": "src/index.js",
   "type": "module",
+  "engines": {
+    "node": ">=18.0.0"
+  },
   "scripts": {
     "dev": "node --watch src/index.js",
-    "start": "node src/index.js"
+    "start": "NODE_ENV=production node src/index.js",
+    "start:dev": "NODE_ENV=development node src/index.js"
   },
   "dependencies": {
     "better-sqlite3": "^9.2.2",
