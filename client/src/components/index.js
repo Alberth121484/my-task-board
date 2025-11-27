@@ -4,6 +4,7 @@ export { default as Layout } from './Layout';
 // Board components
 export { default as BoardHeader } from './BoardHeader';
 export { default as TaskCard, STATUS_CONFIG } from './TaskCard';
+export { default as AddTaskButton } from './AddTaskButton';
 
 // Form components
 export { default as Button } from './Button';

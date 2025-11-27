@@ -3,6 +3,7 @@ import {
   Layout, 
   BoardHeader,
   TaskCard,
+  AddTaskButton,
   Button, 
   Input, 
   TextArea, 
@@ -141,15 +142,7 @@ function App() {
         ))}
 
         {/* Add New Task Button */}
-        <div 
-          onClick={handleAddTask}
-          className="bg-task-yellow-light p-4 rounded-task flex items-center gap-4 cursor-pointer hover:opacity-90 transition-base"
-        >
-          <div className="w-12 h-12 rounded-icon flex items-center justify-center bg-task-yellow-dark">
-            <img src="/icons/Add_round_duotone.svg" alt="Add" className="w-6 h-6" />
-          </div>
-          <span className="text-task-title">Add new task</span>
-        </div>
+        <AddTaskButton onClick={handleAddTask} />
       </div>
 
       {/* Task Edit Modal */}
