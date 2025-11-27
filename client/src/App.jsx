@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { 
   Layout, 
+  BoardHeader,
+  TaskCard,
   Button, 
   Input, 
   TextArea, 
@@ -9,76 +11,140 @@ import {
   StatusSelector 
 } from './components';
 
+// Sample tasks data
+const SAMPLE_TASKS = [
+  {
+    id: '1',
+    name: 'Task in Progress',
+    description: '',
+    icon: '⏰',
+    status: 'in_progress',
+  },
+  {
+    id: '2',
+    name: 'Task Completed',
+    description: '',
+    icon: '🏆',
+    status: 'completed',
+  },
+  {
+    id: '3',
+    name: "Task Won't Do",
+    description: '',
+    icon: '☕',
+    status: 'wont_do',
+  },
+  {
+    id: '4',
+    name: 'Task To Do',
+    description: 'Work on a Challenge on devChallenges.io, learn TypeScript.',
+    icon: '📚',
+    status: 'todo',
+  },
+];
+
 function App() {
+  // Board state
+  const [boardName, setBoardName] = useState('My Task Board');
+  const [boardDescription, setBoardDescription] = useState('Tasks to keep organised');
+  const [tasks, setTasks] = useState(SAMPLE_TASKS);
+  
+  // Modal state
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [taskName, setTaskName] = useState('Task Won\'t Do');
-  const [taskDescription, setTaskDescription] = useState('');
-  const [taskIcon, setTaskIcon] = useState('☕');
-  const [taskStatus, setTaskStatus] = useState('wont_do');
+  const [selectedTask, setSelectedTask] = useState(null);
+  const [editingTask, setEditingTask] = useState({
+    name: '',
+    description: '',
+    icon: '📝',
+    status: 'todo',
+  });
+
+  const handleBoardNameChange = (newName) => {
+    setBoardName(newName);
+    console.log('Board name changed to:', newName);
+    // TODO: API call to update board
+  };
+
+  const handleBoardDescriptionChange = (newDescription) => {
+    setBoardDescription(newDescription);
+    console.log('Board description changed to:', newDescription);
+    // TODO: API call to update board
+  };
+
+  const handleTaskClick = (task) => {
+    setSelectedTask(task);
+    setEditingTask({
+      name: task.name,
+      description: task.description,
+      icon: task.icon,
+      status: task.status,
+    });
+    setIsModalOpen(true);
+  };
+
+  const handleAddTask = () => {
+    setSelectedTask(null);
+    setEditingTask({
+      name: 'New Task',
+      description: '',
+      icon: '📝',
+      status: 'todo',
+    });
+    setIsModalOpen(true);
+  };
+
+  const handleSaveTask = () => {
+    if (selectedTask) {
+      // Update existing task
+      setTasks(tasks.map(t => 
+        t.id === selectedTask.id 
+          ? { ...t, ...editingTask }
+          : t
+      ));
+    } else {
+      // Add new task
+      const newTask = {
+        id: String(Date.now()),
+        ...editingTask,
+      };
+      setTasks([...tasks, newTask]);
+    }
+    setIsModalOpen(false);
+  };
+
+  const handleDeleteTask = () => {
+    if (selectedTask) {
+      setTasks(tasks.filter(t => t.id !== selectedTask.id));
+      setIsModalOpen(false);
+    }
+  };
 
   return (
     <Layout>
       {/* Board Header */}
-      <div className="flex items-center gap-3 mb-2">
-        <img src="/icons/Logo.svg" alt="Logo" className="w-10 h-10" />
-        <h1 className="text-title font-outfit">My Task Board</h1>
-        <img src="/icons/Edit_duotone.svg" alt="Edit" className="w-6 h-6 cursor-pointer" />
-      </div>
-      <p className="text-description text-task-gray mb-6">Tasks to keep organised</p>
+      <BoardHeader
+        name={boardName}
+        description={boardDescription}
+        onNameChange={handleBoardNameChange}
+        onDescriptionChange={handleBoardDescriptionChange}
+      />
 
-      {/* Sample Task Cards */}
+      {/* Task Cards */}
       <div className="space-y-4">
-        {/* In Progress Task */}
-        <div 
-          className="task-status-in_progress p-4 rounded-task flex items-center gap-4 cursor-pointer hover:opacity-90 transition-all"
-          onClick={() => setIsModalOpen(true)}
-        >
-          <div className="icon-container">
-            <span className="text-xl">⏰</span>
-          </div>
-          <span className="text-task-title flex-1">Task in Progress</span>
-          <div className="status-badge-in_progress w-10 h-10 rounded-icon flex items-center justify-center">
-            <img src="/icons/Time_atack_duotone.svg" alt="Status" className="w-5 h-5" />
-          </div>
-        </div>
-
-        {/* Completed Task */}
-        <div className="task-status-completed p-4 rounded-task flex items-center gap-4 cursor-pointer hover:opacity-90 transition-all">
-          <div className="icon-container">
-            <span className="text-xl">🏆</span>
-          </div>
-          <span className="text-task-title flex-1">Task Completed</span>
-          <div className="status-badge-completed w-10 h-10 rounded-icon flex items-center justify-center">
-            <img src="/icons/Done_round.svg" alt="Done" className="w-5 h-5" />
-          </div>
-        </div>
-
-        {/* Won't Do Task */}
-        <div className="task-status-wont_do p-4 rounded-task flex items-center gap-4 cursor-pointer hover:opacity-90 transition-all">
-          <div className="icon-container">
-            <span className="text-xl">☕</span>
-          </div>
-          <span className="text-task-title flex-1">Task Won't Do</span>
-          <div className="status-badge-wont_do w-10 h-10 rounded-icon flex items-center justify-center">
-            <img src="/icons/close_ring_duotone.svg" alt="Close" className="w-5 h-5" />
-          </div>
-        </div>
-
-        {/* To Do Task */}
-        <div className="task-status-todo p-4 rounded-task flex items-center gap-4 cursor-pointer hover:opacity-90 transition-all">
-          <div className="icon-container">
-            <span className="text-xl">📚</span>
-          </div>
-          <div className="flex-1">
-            <span className="text-task-title block">Task To Do</span>
-            <p className="text-description text-task-gray text-sm">
-              Work on a Challenge on devChallenges.io, learn TypeScript.
-            </p>
-          </div>
-        </div>
+        {tasks.map((task) => (
+          <TaskCard
+            key={task.id}
+            task={task}
+            onClick={() => handleTaskClick(task)}
+            isSelected={selectedTask?.id === task.id && isModalOpen}
+          />
+        ))}
 
         {/* Add New Task Button */}
-        <div className="bg-task-yellow-light p-4 rounded-task flex items-center gap-4 cursor-pointer hover:opacity-90 transition-base">
+        <div 
+          onClick={handleAddTask}
+          className="bg-task-yellow-light p-4 rounded-task flex items-center gap-4 cursor-pointer hover:opacity-90 transition-base"
+        >
           <div className="w-12 h-12 rounded-icon flex items-center justify-center bg-task-yellow-dark">
             <img src="/icons/Add_round_duotone.svg" alt="Add" className="w-6 h-6" />
           </div>
@@ -95,45 +161,44 @@ function App() {
         <div className="space-y-5">
           <Input
             label="Task name"
-            value={taskName}
-            onChange={(e) => setTaskName(e.target.value)}
+            value={editingTask.name}
+            onChange={(e) => setEditingTask({ ...editingTask, name: e.target.value })}
             placeholder="Enter task name"
           />
           
           <TextArea
             label="Description"
-            value={taskDescription}
-            onChange={(e) => setTaskDescription(e.target.value)}
+            value={editingTask.description}
+            onChange={(e) => setEditingTask({ ...editingTask, description: e.target.value })}
             placeholder="Enter a short description"
             rows={3}
           />
           
           <IconSelector
             label="Icon"
-            value={taskIcon}
-            onChange={setTaskIcon}
+            value={editingTask.icon}
+            onChange={(icon) => setEditingTask({ ...editingTask, icon })}
           />
           
           <StatusSelector
             label="Status"
-            value={taskStatus}
-            onChange={setTaskStatus}
+            value={editingTask.status}
+            onChange={(status) => setEditingTask({ ...editingTask, status })}
           />
           
           <div className="flex justify-end gap-3 pt-4">
-            <Button 
-              variant="danger"
-              onClick={() => alert('Delete clicked')}
-            >
-              Delete
-              <img src="/icons/Trash.svg" alt="Delete" className="w-5 h-5" />
-            </Button>
+            {selectedTask && (
+              <Button 
+                variant="danger"
+                onClick={handleDeleteTask}
+              >
+                Delete
+                <img src="/icons/Trash.svg" alt="Delete" className="w-5 h-5" />
+              </Button>
+            )}
             <Button 
               variant="primary"
-              onClick={() => {
-                alert('Save clicked');
-                setIsModalOpen(false);
-              }}
+              onClick={handleSaveTask}
             >
               Save
               <img src="/icons/Done_round.svg" alt="Save" className="w-5 h-5" />

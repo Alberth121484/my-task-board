@@ -1,6 +1,10 @@
 // Layout
 export { default as Layout } from './Layout';
 
+// Board components
+export { default as BoardHeader } from './BoardHeader';
+export { default as TaskCard, STATUS_CONFIG } from './TaskCard';
+
 // Form components
 export { default as Button } from './Button';
 export { default as Input } from './Input';
