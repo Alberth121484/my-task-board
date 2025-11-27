@@ -5,6 +5,7 @@ export { default as Layout } from './Layout';
 export { default as BoardHeader } from './BoardHeader';
 export { default as TaskCard, STATUS_CONFIG } from './TaskCard';
 export { default as AddTaskButton } from './AddTaskButton';
+export { default as TaskEditModal } from './TaskEditModal';
 
 // Form components
 export { default as Button } from './Button';
